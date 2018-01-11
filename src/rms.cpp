@@ -5,8 +5,8 @@ using namespace std;
 namespace data_analysis {
 
 RMS::RMS(int window_size) :
-    window_size(window_size){
-
+    window_size(window_size),
+    n_data(0){
 }
 
 double RMS::update(const base::VectorXd& input_data){
