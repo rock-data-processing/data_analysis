@@ -4,15 +4,15 @@ using namespace std;
 
 namespace data_analysis {
 
-Mean::Mean() :
-    window_size(numeric_limits<int>::max()){
+Mean::Mean(int window_size) :
+    window_size(window_size){
 
     sum.setZero();
     sqrt_sum.setZero();
 }
 
 void Mean::update(const base::VectorXd& input_data, base::VectorXd& mean, base::VectorXd& std_dev){
-    if(window_size == std::numeric_limits<int>::max()){
+    if(window_size == numeric_limits<int>::max()){
         sum += input_data;
         n_data++;
         mean = sum / (double)n_data;

@@ -4,14 +4,14 @@ using namespace std;
 
 namespace data_analysis {
 
-RMS::RMS() :
-    window_size(numeric_limits<int>::max()){
+RMS::RMS(int window_size) :
+    window_size(window_size){
 
 }
 
 double RMS::update(const base::VectorXd& input_data){
 
-    if(window_size == std::numeric_limits<int>::max()){
+    if(window_size == numeric_limits<int>::max()){
         sum += input_data.squaredNorm();
         n_data++;
     }

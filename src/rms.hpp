@@ -6,6 +6,7 @@
 namespace data_analysis {
 
 class RMS{
+ protected:
     int window_size;
     double sum;
     int n_data;
@@ -13,10 +14,9 @@ class RMS{
     base::VectorXd input_data;
 
 public:
-    RMS();
+    RMS(int window_size);
     ~RMS(){}
 
-    void setWindowSize(int w){window_size=w;}
     double update(const base::VectorXd& input_data);
 };
 

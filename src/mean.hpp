@@ -6,17 +6,16 @@
 namespace data_analysis {
 
 class Mean{
-
+protected:
     base::VectorXd sum, sqrt_sum;
     std::vector<base::VectorXd> queue;
     int window_size;
     int n_data;
 
 public:
-    Mean();
+    Mean(int window_size);
     ~Mean(){}
 
-    void setWindowSize(int w){window_size=w;}
     void update(const base::VectorXd& input_data, base::VectorXd& mean, base::VectorXd& std_dev);
 };
 
