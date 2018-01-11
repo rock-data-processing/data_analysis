@@ -18,6 +18,7 @@ public:
     ~RMS(){}
 
     double update(const base::VectorXd& input_data);
+    int nData(){return n_data;}
 };
 
 }

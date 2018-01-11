@@ -1,6 +1,8 @@
 #ifndef SIGMOID_HPP
 #define SIGMOID_HPP
 
+#include <string>
+
 namespace data_analysis {
 
 /** Parameters defining a 1-dim. Sigmoid function*/
@@ -33,6 +35,7 @@ public:
 
     void setParams(const SigmoidParams& p){params = p;}
     double compute(const double& input_data);
+    void writeToFile(std::string const &filename, double range_min, double range_max, double step_size);
 };
 
 }

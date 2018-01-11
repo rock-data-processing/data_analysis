@@ -17,6 +17,7 @@ public:
     ~Mean(){}
 
     void update(const base::VectorXd& input_data, base::VectorXd& mean, base::VectorXd& std_dev);
+    int nData(){return n_data;}
 };
 
 }
