@@ -18,14 +18,19 @@ void MinMax::update(base::VectorXd &input_data, double& _min, double &_max){
         max = std::max(input_data.maxCoeff(), max);
     }
     else{
-        if(queue.size() < window_size) // Fill the queue, if it is not filled yet
-            queue.conservativeResize(queue.rows()+1, queue.cols());
-        else // Shift queue up
-            queue.block(0, 0, queue.rows() - 1, queue.cols()) = queue.block(1, 0, queue.rows(), queue.cols());
+        if(queue.size() < window_size){ // Fill the queue, if it is not filled yet
+            queue.push_back(input_data);
+        }
+        else{ // Shift queue up
+            for(size_t i = 1; i < queue.size(); i++)
+                queue[i-1] = queue[i];
+            queue[queue.size()-1] = input_data;
+        }
 
-        queue.block(queue.rows()-1,0,queue.rows(), queue.cols()) = input_data.transpose();
-        min = queue.minCoeff();
-        max = queue.maxCoeff();
+        for(size_t i = 0; i < queue.size(); i++){
+            min = std::min(queue[i].minCoeff(), min);
+            max = std::max(queue[i].maxCoeff(), max);
+        }
     }
 
     _min = min;

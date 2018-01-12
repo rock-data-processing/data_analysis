@@ -9,7 +9,7 @@ class MinMax{
 protected:
     double min, max;
     int window_size;
-    base::MatrixXd queue;
+    std::vector<base::VectorXd> queue;
 public:
     MinMax(int window_size);
     ~MinMax(){}
