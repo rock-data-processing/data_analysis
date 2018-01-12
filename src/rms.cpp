@@ -24,7 +24,7 @@ double RMS::update(const base::VectorXd& input_data){
         queue(queue.rows()-1) = input_data.squaredNorm();
         sum = 0;
         for(int i = 0; i < queue.size(); i++)
-            sum += queue(i)*queue(i);
+            sum += queue(i);
         n_data = queue.size();
     }
     return sqrt(sum / (double)n_data);
