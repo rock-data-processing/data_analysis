@@ -68,7 +68,8 @@ public:
 // constructor with sizes
 float_mat::float_mat(const size_t rows,const size_t cols,const double defval)
         : std::vector<float_vect>(rows) {
-    for (uint i = 0; i < rows; ++i) {
+    int i;
+    for (i = 0; i < (int)rows; ++i) {
         (*this)[i].resize(cols, defval);
     }
     if ((rows < 1) || (cols < 1)) {
@@ -110,17 +111,18 @@ float_mat::float_mat(const float_vect &v)
 void permute(float_mat &A, int_vect &idx)
 {
     int_vect i(idx.size());
+    int j,k;
 
-    for (uint j = 0; j < A.nr_rows(); ++j) {
+    for (j = 0; j < (int)A.nr_rows(); ++j) {
         i[j] = j;
     }
 
     // loop over permuted indices
-    for (uint j = 0; j < A.nr_rows(); ++j) {
+    for (j = 0; j < (int)A.nr_rows(); ++j) {
         if (i[j] != idx[j]) {
 
             // search only the remaining indices
-            for (uint k = j+1; k < A.nr_rows(); ++k) {
+            for (k = j+1; k < (int)A.nr_rows(); ++k) {
                 if (i[k] ==idx[j]) {
                     std::swap(A[j],A[k]); // swap the rows and
                     i[k] = i[j];     // the elements of
@@ -154,7 +156,8 @@ static int partial_pivot(float_mat &A, const size_t row, const size_t col,
     double piv_elem = fabs(A[idx[row]][col]) * scale[idx[row]];
 
     // loop over possible pivots below current
-    for (uint j = row + 1; j < A.nr_rows(); ++j) {
+    int j;
+    for (j = row + 1; j < (int)A.nr_rows(); ++j) {
 
         const double tmp = fabs(A[idx[j]][col]) * scale[idx[j]];
 
@@ -170,7 +173,6 @@ static int partial_pivot(float_mat &A, const size_t row, const size_t col,
       //sgs_error("partial_pivot(): Zero pivot encountered.\n")
 #endif
 
-    uint j;
     if(pivot > (int)row) {           // bring the pivot to the diagonal
         j = idx[row];           // reorder swap array
         idx[row] = idx[pivot];
@@ -189,14 +191,16 @@ static int partial_pivot(float_mat &A, const size_t row, const size_t col,
  * place.  A is not modified, and the solution, b, is returned in a. */
 static void lu_backsubst(float_mat &A, float_mat &a, bool diag=false)
 {
-    for (uint r = (A.nr_rows() - 1); r >= 0; --r) {
-        for (uint c = (A.nr_cols() - 1); c > r; --c) {
-            for (uint k = 0; k < A.nr_cols(); ++k) {
+    int r,c,k;
+
+    for (r = (A.nr_rows() - 1); r >= 0; --r) {
+        for (c = (A.nr_cols() - 1); c > r; --c) {
+            for (k = 0; k < (int)A.nr_cols(); ++k) {
                 a[r][k] -= A[r][c] * a[c][k];
             }
         }
         if(!diag) {
-            for (uint k = 0; k < A.nr_cols(); ++k) {
+            for (k = 0; k < (int)A.nr_cols(); ++k) {
                 a[r][k] /= A[r][r];
             }
         }
@@ -212,14 +216,15 @@ static void lu_backsubst(float_mat &A, float_mat &a, bool diag=false)
  * place.  A is not modified, and the solution, b, is returned in a. */
 static void lu_forwsubst(float_mat &A, float_mat &a, bool diag=true)
 {
-    for (uint r = 0;r < A.nr_rows(); ++r) {
-        for(uint c = 0; c < r; ++c) {
-            for (uint k = 0; k < A.nr_cols(); ++k) {
+    int r,k,c;
+    for (r = 0;r < (int)A.nr_rows(); ++r) {
+        for(c = 0; c < r; ++c) {
+            for (k = 0; k < (int)A.nr_cols(); ++k) {
                 a[r][k] -= A[r][c] * a[c][k];
             }
         }
         if(!diag) {
-            for (uint k = 0; k < A.nr_cols(); ++k) {
+            for (k = 0; k < (int)A.nr_cols(); ++k) {
                 a[r][k] /= A[r][r];
             }
         }
@@ -246,25 +251,27 @@ static int lu_factorize(float_mat &A, int_vect &idx, double tol=TINY_FLOAT)
     }
 
     float_vect scale(A.nr_rows());  // implicit pivot scaling
-    for (uint  i = 0; i < A.nr_rows(); ++i) {
+    int i,j;
+    for (i = 0; i < (int)A.nr_rows(); ++i) {
         double maxval = 0.0;
-        for (uint j = 0; j < A.nr_cols(); ++j) {
+        for (j = 0; j < (int)A.nr_cols(); ++j) {
             if (fabs(A[i][j]) > maxval)
                 maxval = fabs(A[i][j]);
         }
         if (maxval == 0.0) {
-	  //sgs_error("lu_factorize(): zero pivot found.\n");
+      //sgs_error("lu_factorize(): zero pivot found.\n");
             return 0;
         }
         scale[i] = 1.0 / maxval;
     }
 
     int swapNum = 1;
-    for (uint c = 0; c < A.nr_cols() ; ++c) {            // loop over columns
+    int c,r;
+    for (c = 0; c < (int)A.nr_cols() ; ++c) {            // loop over columns
         swapNum *= partial_pivot(A, c, c, scale, idx, tol); // bring pivot to diagonal
-        for(uint r = 0; r < A.nr_rows(); ++r) {      //  loop over rows
+        for(r = 0; r < (int)A.nr_rows(); ++r) {      //  loop over rows
             int lim = (r < c) ? r : c;
-            for (int j = 0; j < lim; ++j) {
+            for (j = 0; j < lim; ++j) {
                 A[idx[r]][c] -= A[idx[r]][j] * A[idx[j]][c];
             }
             if (r > c)
@@ -284,8 +291,9 @@ static float_mat lin_solve(const float_mat &A, const float_mat &a,
     float_mat B(A);
     float_mat b(a);
     int_vect idx(B.nr_rows());
+    int j;
 
-    for (uint  j = 0; j < B.nr_rows(); ++j) {
+    for (j = 0; j < (int)B.nr_rows(); ++j) {
         idx[j] = j;  // init row swap label array
     }
     lu_factorize(B,idx,tol); // get the lu-decomp.
@@ -305,8 +313,9 @@ static float_mat invert(const float_mat &A)
     const int n = A.size();
     float_mat E(n, n, 0.0);
     float_mat B(A);
+    int i;
 
-    for (int i = 0; i < n; ++i) {
+    for (i = 0; i < n; ++i) {
         E[i][i] = 1.0;
     }
 
@@ -317,9 +326,10 @@ static float_mat invert(const float_mat &A)
 static float_mat transpose(const float_mat &a)
 {
     float_mat res(a.nr_cols(), a.nr_rows());
+    int i,j;
 
-    for (uint i = 0; i < a.nr_rows(); ++i) {
-        for (uint j = 0; j < a.nr_cols(); ++j) {
+    for (i = 0; i < (int)a.nr_rows(); ++i) {
+        for (j = 0; j < (int)a.nr_cols(); ++j) {
             res[j][i] = a[i][j];
         }
     }
@@ -335,10 +345,12 @@ float_mat operator *(const float_mat &a, const float_mat &b)
         return res;
     }
 
-    for (uint i = 0; i < a.nr_rows(); ++i) {
-        for (uint j = 0; j < b.nr_cols(); ++j) {
+    int i,j,k;
+
+    for (i = 0; i < (int)a.nr_rows(); ++i) {
+        for (j = 0; j < (int)b.nr_cols(); ++j) {
             double sum(0.0);
-            for (uint k = 0; k < a.nr_cols(); ++k) {
+            for (k = 0; k < (int)a.nr_cols(); ++k) {
                 sum += a[i][k] * b[k][j];
             }
             res[i][j] = sum;
@@ -357,17 +369,18 @@ static float_vect sg_coeff(const float_vect &b, const size_t deg)
     float_vect res(rows);
 
     // generate input matrix for least squares fit
-    for (uint i = 0; i < rows; ++i) {
-        for (uint j = 0; j < cols; ++j) {
+    int i,j;
+    for (i = 0; i < (int)rows; ++i) {
+        for (j = 0; j < (int)cols; ++j) {
             A[i][j] = pow(double(i), double(j));
         }
     }
 
     float_mat c(invert(transpose(A) * A) * (transpose(A) * transpose(b)));
 
-    for (uint i = 0; i < b.size(); ++i) {
+    for (i = 0; i < (int)b.size(); ++i) {
         res[i] = c[0][0];
-        for (uint j = 1; j <= deg; ++j) {
+        for (j = 1; j <= (int)deg; ++j) {
             res[i] += c[j][0] * pow(double(i), double(j));
         }
     }
@@ -394,28 +407,29 @@ float_vect sg_smooth(const float_vect &v, const int width, const int deg)
     const int endidx = v.size() - 1;
 
     // do a regular sliding window average
+    int i,j;
     if (deg == 0) {
         // handle border cases first because we need different coefficients
 #if defined(_OPENMP)
 #pragma omp parallel for private(i,j) schedule(static)
 #endif
-        for (int i = 0; i < width; ++i) {
-	    const double scale = 1.0/double(i+1);
+        for (i = 0; i < width; ++i) {
+        const double scale = 1.0/double(i+1);
             const float_vect c1(width, scale);
-            for (int j = 0; j <= i; ++j) {
+            for (j = 0; j <= i; ++j) {
                 res[i]          += c1[j] * v[j];
                 res[endidx - i] += c1[j] * v[endidx - j];
             }
         }
 
         // now loop over rest of data. reusing the "symmetric" coefficients.
-	const double scale = 1.0/double(window);
+    const double scale = 1.0/double(window);
         const  float_vect c2(window, scale);
 #if defined(_OPENMP)
 #pragma omp parallel for private(i,j) schedule(static)
 #endif
-        for (int i = 0; i <= ((int)v.size() - window); ++i) {
-            for (int j = 0; j < window; ++j) {
+        for (i = 0; i <= ((int)v.size() - window); ++i) {
+            for (j = 0; j < window; ++j) {
                 res[i + width] += c2[j] * v[i + j];
             }
         }
@@ -426,12 +440,12 @@ float_vect sg_smooth(const float_vect &v, const int width, const int deg)
 #if defined(_OPENMP)
 #pragma omp parallel for private(i,j) schedule(static)
 #endif
-    for (int i = 0; i < width; ++i) {
+    for (i = 0; i < width; ++i) {
         float_vect b1(window, 0.0);
         b1[i] = 1.0;
 
         const float_vect c1(sg_coeff(b1, deg));
-        for (int j = 0; j < window; ++j) {
+        for (j = 0; j < window; ++j) {
             res[i]          += c1[j] * v[j];
             res[endidx - i] += c1[j] * v[endidx - j];
         }
@@ -445,8 +459,8 @@ float_vect sg_smooth(const float_vect &v, const int width, const int deg)
 #if defined(_OPENMP)
 #pragma omp parallel for private(i,j) schedule(static)
 #endif
-    for (int i = 0; i <= ((int)v.size() - window); ++i) {
-        for (int j = 0; j < window; ++j) {
+    for (i = 0; i <= ((int)v.size() - window); ++i) {
+        for (j = 0; j < window; ++j) {
             res[i + width] += c2[j] * v[i + j];
         }
     }
@@ -463,17 +477,18 @@ static float_vect lsqr_fprime(const float_vect &b, const int deg)
     float_vect res(rows);
 
     // generate input matrix for least squares fit
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
+    int i,j;
+    for (i = 0; i < rows; ++i) {
+        for (j = 0; j < cols; ++j) {
             A[i][j] = pow(double(i), double(j));
         }
     }
 
     float_mat c(invert(transpose(A) * A) * (transpose(A) * transpose(b)));
 
-    for (uint i = 0; i < b.size(); ++i) {
+    for (i = 0; i < (int)b.size(); ++i) {
         res[i] = c[1][0];
-        for (int j = 1; j < deg; ++j) {
+        for (j = 1; j < deg; ++j) {
             res[i] += c[j + 1][0] * double(j+1)
                 * pow(double(i), double(j));
         }
@@ -503,19 +518,21 @@ float_vect sg_derivative(const float_vect &v, const int width,
     // handle border cases first because we do not repeat the fit
     // lower part
     float_vect b(window, 0.0);
-    for (int i = 0; i < window; ++i) {
+    int i,j;
+
+    for (i = 0; i < window; ++i) {
         b[i] = v[i] / h;
     }
     const float_vect c(lsqr_fprime(b, deg));
-    for (int j = 0; j <= width; ++j) {
+    for (j = 0; j <= width; ++j) {
         res[j] = c[j];
     }
     // upper part. direction of fit is reversed
-    for (int i = 0; i < window; ++i) {
+    for (i = 0; i < window; ++i) {
         b[i] = v[v.size() - 1 - i] / h;
     }
     const float_vect d(lsqr_fprime(b, deg));
-    for (int i = 0; i <= width; ++i) {
+    for (i = 0; i <= width; ++i) {
         res[v.size() - 1 - i] = -d[i];
     }
 
@@ -524,15 +541,14 @@ float_vect sg_derivative(const float_vect &v, const int width,
 #if defined(_OPENMP)
 #pragma omp parallel for private(i,j) schedule(static)
 #endif
-    for (int i = 1; i < ((int)v.size() - window); ++i) {
-        for (int j = 0; j < window; ++j) {
+    for (i = 1; i < ((int)v.size() - window); ++i) {
+        for (j = 0; j < window; ++j) {
             b[j] = v[i + j] / h;
         }
         res[i + width] = lsqr_fprime(b, deg)[width];
     }
     return res;
 }
-
 
 SGDerivative::SGDerivative(int window_size, int poly_degree) :
     window_size(window_size),
