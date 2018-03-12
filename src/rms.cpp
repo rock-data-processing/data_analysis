@@ -19,10 +19,10 @@ double RMS::update(const base::VectorXd& input_data){
         if(queue.size() < window_size) // Fill the queue, if it is not filled yet
             queue.conservativeResize(queue.rows()+1);
         else // Shift queue up
-            queue.block(0, 0, queue.rows() - 1, 1) = queue.block(1, 0, queue.rows(), 1);
+            queue.segment(0, queue.size() - 1) = queue.segment(1, queue.size() - 1);
 
-        queue(queue.rows()-1) = input_data.squaredNorm();
-        sum = 0;
+        queue(queue.size()-1) = input_data.squaredNorm();
+        sum = queue.sum();
         for(int i = 0; i < queue.size(); i++)
             sum += queue(i);
         n_data = queue.size();
