@@ -1,4 +1,5 @@
 #include "sg_derivative.hpp"
+#include <iostream>
 
 namespace data_analysis {
 
@@ -16,7 +17,7 @@ SGDerivative::SGDerivative(int window_size, int poly_degree) :
 }
 
 void SGDerivative::Process(const double& data, double& derivative){
-    base::VectorXd tmp;
+    base::VectorXd tmp(1);
     tmp << data;
     queue.pushShift(tmp);
 

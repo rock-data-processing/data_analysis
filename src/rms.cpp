@@ -5,6 +5,7 @@ using namespace std;
 namespace data_analysis {
 
 RMS::RMS(int window_size) :
+    sum(0),
     queue(Queue(window_size)),
     n_data(0){
 }
@@ -17,6 +18,7 @@ double RMS::update(const base::VectorXd& input_data){
     }
     else{
         queue.pushShift(input_data);
+        n_data = queue.size();
 
         sum = 0;
         for(uint i = 0; i < queue.size(); i++)
