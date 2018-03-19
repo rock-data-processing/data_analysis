@@ -1,20 +1,19 @@
 #ifndef MIN_MAX_HPP
 #define MIN_MAX_HPP
 
-#include <base/Eigen.hpp>
+#include "queue.hpp"
 
 namespace data_analysis {
 
 class MinMax{
 protected:
     double min, max;
-    int window_size;
-    std::vector<base::VectorXd> queue;
+    Queue queue;
 public:
     MinMax(int window_size);
     ~MinMax(){}
 
-    void update(base::VectorXd &input_data, double& min, double &max);
+    void update(const base::VectorXd &input_data, double& min, double &max);
 };
 
 }

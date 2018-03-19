@@ -19,8 +19,7 @@
 #include <cstddef>             // for size_t
 #include <cmath>               // for fabs
 #include <vector>
-#include <stdexcept>
-#include "sg_smooth.hpp"
+#include "sg.hpp"
 
 
 //! default convergence
@@ -548,33 +547,6 @@ float_vect sg_derivative(const float_vect &v, const int width,
         res[i + width] = lsqr_fprime(b, deg)[width];
     }
     return res;
-}
-
-SGDerivative::SGDerivative(int window_size, int poly_degree) :
-    window_size(window_size),
-    poly_degree(poly_degree){
-    queue_size = 2*window_size + 2;
-
-    if(poly_degree >= window_size)
-        throw std::runtime_error("SGFilter: Polynomial degree should be smaller than window size");
-    if(window_size < 1)
-        throw std::runtime_error("SGFilter: Window size must be >= 1");
-    if(poly_degree < 0)
-        throw std::runtime_error("SGFilter: Polynomial degree must be >= 0");
-}
-
-void SGDerivative::Process(const double &data_in,  double& derivative){
-    // Update queue
-    if((int)queue.size() < queue_size)
-        queue.push_back(data_in);
-    else{
-        for(size_t i = 1; i < queue.size(); i++)
-            queue[i-1] = queue[i];
-        queue[queue.size()-1] = data_in;
-    }
-    // Compute derivative
-    deriv_out = sg_derivative(queue, window_size, poly_degree);
-    derivative = deriv_out[floor(deriv_out.size()/2)];
 }
 
 // Local Variables:

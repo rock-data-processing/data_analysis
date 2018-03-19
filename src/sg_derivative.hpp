@@ -1,15 +1,19 @@
-#ifndef __SGSMOOTH_HPP__
-#define __SGSMOOTH_HPP__
+#ifndef SG_DERIVATIVE_HPP
+#define SG_DERIVATIVE_HPP
 
-#include <vector>
+#include "sg.hpp"
+#include "queue.hpp"
+
+namespace data_analysis {
 
 class SGDerivative{
 protected:
     int window_size;
-    int queue_size;
     int poly_degree;
-    std::vector<double> queue;
+    Queue queue;
     std::vector<double> deriv_out;
+
+    void queueColumn(uint idx, std::vector<double> &col);
 public:
     /**
      * @brief Default constructor
@@ -19,14 +23,10 @@ public:
     SGDerivative(int window_size, int poly_degree);
     ~SGDerivative(){}
 
-    void Process(const double &data_in, double& derivative);
+    void Process(const double& data, double& derivative);
 
 };
 
-// savitzky golay smoothing.
-std::vector<double> sg_smooth(const std::vector<double> &v, const int w, const int deg);
-//! numerical derivative based on savitzky golay smoothing.
-std::vector<double> sg_derivative(const std::vector<double> &v, const int w,
-                                const int deg, const double h=1.0);
+}
 
-#endif // __SGSMOOTH_HPP__
+#endif

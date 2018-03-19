@@ -1,15 +1,15 @@
 #ifndef MEAN_HPP
 #define MEAN_HPP
 
-#include <base/Eigen.hpp>
+#include "queue.hpp"
 
 namespace data_analysis {
 
 class Mean{
 protected:
+    Queue queue;
+
     base::VectorXd sum, sqrt_sum;
-    std::vector<base::VectorXd> queue;
-    int window_size;
     int n_data;
 
 public:
