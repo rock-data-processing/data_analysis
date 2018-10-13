@@ -10,9 +10,10 @@ class RMS{
     double sum;
     Queue queue;
     int n_data;
+    bool accumulate;
 
 public:
-    RMS(int window_size);
+    RMS(int window_size, bool accumulate = false);
     ~RMS(){}
 
     double update(const base::VectorXd& input_data);

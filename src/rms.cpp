@@ -4,10 +4,11 @@ using namespace std;
 
 namespace data_analysis {
 
-RMS::RMS(int window_size) :
+RMS::RMS(int window_size, bool acc) :
     sum(0),
     queue(Queue(window_size)),
-    n_data(0){
+    n_data(0),
+    accumulate(acc){
 }
 
 double RMS::update(const base::VectorXd& input_data){
@@ -25,7 +26,10 @@ double RMS::update(const base::VectorXd& input_data){
             sum += queue[i].squaredNorm();
 
     }
-    return sqrt(sum / (double)n_data);
+    if(accumulate)
+        return sqrt(sum);
+    else
+        return sqrt(sum / (double)n_data);
 }
 
 }
