@@ -2,6 +2,7 @@
 #define QUEUE_HPP
 
 #include <base/Eigen.hpp>
+#include <vector>
 
 namespace data_analysis{
 
